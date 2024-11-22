@@ -110,7 +110,7 @@ async def attack(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     
     if update.message.chat.id not in load_json(GROUPS_FILE) and not is_admin(user_id):
-        return await update.message.reply_text("❌ Bạn không có quyền sử dụng tính năng này. Muốn build server bot riêng hoặc mở không giới hạn slot time, liên hệ @NeganSSHConsole.")
+        return await update.message.reply_text("❌ Bạn không có quyền sử dụng tính năng này. Muốn build server bot riêng hoặc mở không giới hạn slot time, liên hệ @neverlose102.")
 
     
     if not is_admin(user_id):  
