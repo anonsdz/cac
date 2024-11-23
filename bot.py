@@ -297,6 +297,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 ### User Commands:
 - /flood https://google.com 60 - Flood attack for 60 seconds.
 - /bypass https://google.com 60 - Bypass attack for 60 seconds.
+- /tls https://google.com 60 - TLS attack for 60 seconds
 - /help - Show command guide.
 
 ### Admin Commands:
