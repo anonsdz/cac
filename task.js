@@ -1,3 +1,5 @@
+// npm install telegraf os-utils
+
 const { exec, execSync } = require('child_process');
 const { Telegraf } = require('telegraf');
 const os = require('os');
